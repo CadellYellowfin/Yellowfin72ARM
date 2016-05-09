@@ -3,7 +3,7 @@ date
 echo "Start script"
 
 #Setting DB user var
-_dbuser="$1"
+_dbuser=`echo $1 | base64 --decode`
 if [ -z "$_dbuser" ]
 	then
 	_dbuser="yellowfindbuser"
@@ -12,7 +12,7 @@ echo "db User is"
 echo $_dbuser
 
 #Setting DB user var
-_dbpass="$2"
+_dbpass=`echo $2 | base64 --decode`
 if [ -z "$_dbpass" ]
 	then
 	_dbpass="Asz7js599!"
