@@ -8,7 +8,7 @@
 		"description": "Base URL for Marketplace",
 		"artifactsBaseUrl": ""
 	   },
-	   "defaultValue": "https://raw.githubusercontent.com/OctopusDeploy/azure-marketplace/master"
+	   "defaultValue": "https://raw.githubusercontent.com/CadellYellowfin/Yellowfin72ARM/master"
 	 },  
 	
 	"vmSize" : {
@@ -110,7 +110,7 @@
 		"installer": {
 		  "name": "[concat(variables('namespace'), '-vm/YellowfinInstaller')]",
 		  "fileUris": [
-			"[concat(variables('baseUrl'), '/yellowfininstaller.sh')]"
+			"[concat(variables('baseUrl'), 'https://raw.githubusercontent.com/CadellYellowfin/Yellowfin72ARM/master/yellowfininstaller-v2.sh')]"
 		  ],
 		  "commandToExecute": "[concat('sh ./yellowfininstaller.sh ', base64(parameters('psql').database.credentials.admin.username), ' ',base64(parameters('psql').database.credentials.admin.password) ' > \\tmp\\yellowfininstaller.log 2>&1')]"
 		},
