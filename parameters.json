@@ -7,6 +7,9 @@
         },
         "sqlAdminPassword": {
             "value": "Admin123!"
-        }
+        },
+		 "vmSSH": {
+            "value": "Admin123!"
+        }		
    }
 }

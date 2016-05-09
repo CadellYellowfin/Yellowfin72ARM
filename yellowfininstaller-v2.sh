@@ -53,7 +53,7 @@ sudo -u postgres psql -c "ALTER USER $_dbuser WITH PASSWORD '$_dbpass'"
 #Get Yellowfin Installer
 date
 echo "Get Yellowfin Installer"
-wget http://au1.hostedftp.com/~yellowfin/downloads/7.2/yellowfin-installer.jar -O /tmp/yellowfin.jar
+wget http://au1.hostedftp.com/downloads/azure/jsontemplatedownloads/yellowfin-installer.jar -O /tmp/yellowfin.jar
 
 #Get Yellowfin Licence
 date
