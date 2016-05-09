@@ -1,0 +1,415 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+	"baseUrl": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Base URL for Marketplace",
+		"artifactsBaseUrl": ""
+	   },
+	   "defaultValue": "https://raw.githubusercontent.com/OctopusDeploy/azure-marketplace/master"
+	 },  
+	
+	"vmSize" : {
+	  "type": "string",
+	  "defaultValue": "Standard_D2",
+	  "metadata": {
+		"description": "VM Size for Yellowfin Virtual Machine."
+	  }
+	},
+	
+	"vmUsername": {
+	  "type": "string",
+	  "defaultValue": "ubuntu",
+	  "metadata": {
+		"description": "Username for the Yellowfin Virtual Machine."
+	  }
+	},
+	
+	"vmPassword": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "Password for the Yellowfin Virtual Machine."
+	  }
+	},
+	
+	 "vmSSH": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "Password for the Yellowfin Virtual Machine."
+	  }
+	},
+	
+	"sqlAdminUsername": {
+	  "type": "string",
+	  "defaultValue": "yellowfindbuser",
+	  "metadata": {
+		"description": "Admin username for the Yellowfin Postgres DB Server."
+	  }
+	},
+	
+	"sqlAdminPassword": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "Admin password for the Yellowfin Postgres DB Server."
+	  }
+	}
+  },
+  
+  "variables": {
+	"baseUrl": "[parameters('baseUrl')]",
+	"namespace": "yellowfin",
+	"location": "[resourceGroup().location]",
+	"tags": {
+	  "vendor": "Yellowfin"
+	},
+	
+	"vm" : {
+	  "name": "[concat(variables('namespace'), '-vm')]",
+	  "credentials": {
+		"admin": {
+		  "username": "[parameters('vmUsername')]",
+		  "password": "[parameters('vmPassword')]"
+		}
+	  },
+	  
+	  "hostname": "Yellowfin72",
+	  
+	  "size": "[parameters('vmSize')]",
+	  "image": {
+		"publisher": "canonical",
+		"offer": "ubuntuserver",
+		"sku": "14.04.4-LTS",
+		"version": "latest"
+	  },
+	  
+	  "osdisk": {
+		"name": "[concat(variables('namespace'), '-osdisk')]",
+		"storageAccount": {
+		  "name": "[concat(variables('namespace'), '01', uniqueString(resourceGroup().id))]",
+		  "type": "Standard_LRS"
+		}
+	  },
+	  
+	  "datadisk": {
+		"name": "[concat(variables('namespace'), '-datadisk')]",
+		"diskSizeGB": "1023",
+		"storageAccount": {
+		  "name": "[concat(variables('namespace'), '02', uniqueString(resourceGroup().id))]",
+		  "type": "Standard_LRS"
+		}
+	  },
+	  
+	  "nic": {
+		"name": "[concat(variables('namespace'), '-nic')]",
+		"ipConfigName": "[concat(variables('namespace'), '-ipconfig')]"
+	  },
+		   
+	  "extensions": {
+		"installer": {
+		  "name": "[concat(variables('namespace'), '-vm/YellowfinInstaller')]",
+		  "fileUris": [
+			"[concat(variables('baseUrl'), '/yellowfininstaller.sh')]"
+		  ],
+		  "commandToExecute": "[concat('sh ./yellowfininstaller.sh ', base64(parameters('psql').database.credentials.admin.username), ' ',base64(parameters('psql').database.credentials.admin.password) ' > \\tmp\\yellowfininstaller.log 2>&1')]"
+		},
+		"diagnostics": {
+		  "name": "[concat(variables('namespace'), '-vm/Microsoft.Insights.VMDiagnosticsSettings')]",
+		  "wadcfgx": ""
+		}
+	  }
+	},
+	"network": {
+	  "publicIP": {
+		"name": "[concat(variables('namespace'), '-publicip')]",
+		"type": "Static"
+	  },
+	  "vnet": {
+		"name": "[concat(variables('namespace'), '-vnet')]",
+		"addressPrefix": "10.0.0.0/16",
+		"subnet": {
+		  "name": "[concat(variables('namespace'), '-subnet')]",
+		  "addressPrefix": "10.0.0.0/24"
+		}
+	  },
+	  "networkSecurityGroup": {
+		"name": "[concat(variables('namespace'), '-nsg')]"
+	  }
+	},    
+	
+	"psql": {						
+			"database": {
+				"credentials": {
+					"admin": {
+						"username": "[parameters('sqlAdminUsername')]",
+						"password": "[parameters('sqlAdminPassword')]"
+					}
+				}
+			}
+	}    
+  },
+  
+  "resources": [
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Storage/storageAccounts",
+	  "name": "[variables('vm').datadisk.storageAccount.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "properties": {
+		"accountType": "[variables('vm').datadisk.storageAccount.type]"
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Storage/storageAccounts",
+	  "name": "[variables('vm').osdisk.storageAccount.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "properties": {
+		"accountType": "[variables('vm').osdisk.storageAccount.type]"
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Network/publicIPAddresses",
+	  "name": "[variables('network').publicIP.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "properties": {
+		"publicIPAllocationMethod": "[variables('network').publicIP.type]"
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Network/virtualNetworks",
+	  "name": "[variables('network').vnet.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "properties": {
+		"addressSpace": {
+		  "addressPrefixes": [
+			"[variables('network').vnet.addressPrefix]"
+		  ]
+		},
+		"subnets": [
+		  {
+			"name": "[variables('network').vnet.subnet.name]",
+			"properties": {
+			  "addressPrefix": "[variables('network').vnet.subnet.addressPrefix]"
+			}
+		  }
+		]
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Network/networkSecurityGroups",
+	  "name": "[variables('network').networkSecurityGroup.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "properties": {
+		"securityRules": [
+		  {
+			"name": "allow_web",
+			"properties": {
+			  "description": "Allow web",
+			  "protocol": "Tcp",
+			  "sourcePortRange": "*",
+			  "destinationPortRange": "80",
+			  "sourceAddressPrefix": "Internet",
+			  "destinationAddressPrefix": "*",
+			  "access": "Allow",
+			  "priority": 100,
+			  "direction": "Inbound"
+			}
+		  },
+		  {
+			"name": "allow_ssh",
+			"properties": {
+			  "description": "Allow SSH",
+			  "protocol": "Tcp",
+			  "sourcePortRange": "*",
+			  "destinationPortRange": "22",
+			  "sourceAddressPrefix": "Internet",
+			  "destinationAddressPrefix": "*",
+			  "access": "Allow",
+			  "priority": 101,
+			  "direction": "Inbound"
+			}
+		  }
+		]
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Network/networkInterfaces",
+	  "name": "[variables('vm').nic.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "dependsOn": [
+		"[concat('Microsoft.Network/networkSecurityGroups/', variables('network').networkSecurityGroup.name)]",
+		"[concat('Microsoft.Network/publicIPAddresses/', variables('network').publicIP.name)]",
+		"[concat('Microsoft.Network/virtualNetworks/', variables('network').vnet.name)]"
+	  ],
+	  "properties": {
+		"ipConfigurations": [
+		  {
+			"name": "[variables('vm').nic.ipConfigName]",
+			"properties": {
+			  "privateIPAllocationMethod": "Dynamic",
+			  "publicIPAddress": {
+				"id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('network').publicIP.name)]"
+			  },              
+			  "subnet": {
+				"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('network').vnet.name), '/subnets/', variables('network').vnet.subnet.name)]"
+			  }
+			}
+		  }
+		],
+		"networkSecurityGroup": {
+		  "id": "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('network').networkSecurityGroup.name)]"
+		}
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15",
+	  "type": "Microsoft.Compute/virtualMachines",
+	  "name": "[variables('vm').name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]"
+	  },
+	  "dependsOn": [
+		"[concat('Microsoft.Storage/storageAccounts/', variables('vm').osdisk.storageAccount.name)]",
+		"[concat('Microsoft.Storage/storageAccounts/', variables('vm').datadisk.storageAccount.name)]",
+		"[concat('Microsoft.Network/networkInterfaces/', variables('vm').nic.name)]"
+	  ],
+	  "properties": {
+		"hardwareProfile": {
+		  "vmSize": "[variables('vm').size]"
+		},
+		"osProfile": {
+		  "computerName": "[variables('vm').name]",
+		  "adminUsername": "[variables('vm').credentials.admin.username]",
+		  "adminPassword": "[variables('vm').credentials.admin.password]"
+		},
+		"storageProfile": {
+		  "imageReference": {
+			"publisher": "[variables('vm').image.publisher]",
+			"offer": "[variables('vm').image.offer]",
+			"sku": "[variables('vm').image.sku]",
+			"version": "[variables('vm').image.version]"
+		  },
+		  "osDisk": {
+			"name": "osdisk",
+			"vhd": {
+			  "uri": "[concat('http://', variables('vm').osdisk.storageAccount.name, '.blob.core.windows.net/vhds/', variables('vm').osdisk.name, '.vhd')]"
+			},
+			"caching": "ReadWrite",
+			"createOption": "FromImage"
+		  },
+		  "dataDisks": [
+			{
+			  "name": "[variables('vm').datadisk.name]",
+			  "diskSizeGB": "[variables('vm').datadisk.diskSizeGB]",
+			  "lun": 0,
+			  "vhd": {
+				"uri": "[concat('http://', variables('vm').datadisk.storageAccount.name, '.blob.core.windows.net/vhds/', variables('vm').datadisk.name, '.vhd')]"
+			  },
+			  "caching": "None",
+			  "createOption": "Empty"
+			}
+		  ]
+		},
+		"networkProfile": {
+		  "networkInterfaces": [
+			{
+			  "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm').nic.name)]"
+			}
+		  ]
+		},
+		"diagnosticsProfile": {
+		  "bootDiagnostics": {
+			"enabled": "true",
+			"storageUri": "[concat('http://', variables('vm').datadisk.storageAccount.name, '.blob.core.windows.net')]"
+		  }
+		}
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15", 
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "[variables('vm').extensions.installer.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]",
+		"displayName": "Yellowfin Installer"
+	  },
+	  "dependsOn": [
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]"
+	  ],
+	  "properties": {
+		"publisher": "Microsoft.OSTCExtensions",
+		"type": "CustomScriptForLinux",
+		"typeHandlerVersion": "1.4",
+		"autoUpgradeMinorVersion": true,
+		"settings": {
+		  "fileUris": "[variables('vm').extensions.installer.fileUris]"
+		  
+		},
+		"protectedSettings": {
+		  "commandToExecute": "[variables('vm').extensions.installer.commandToExecute]"
+		}
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15", 
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "[variables('vm').extensions.diagnostics.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]",
+		"displayName": "Azure VM Diagnostics"
+	  },      
+	  "dependsOn": [
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]",
+		"[concat('Microsoft.Storage/storageAccounts/', variables('vm').datadisk.storageAccount.name)]"
+	  ],      
+	  "properties": {
+		"publisher": "Microsoft.Azure.Diagnostics",
+		"type": "IaaSDiagnostics",
+		"typeHandlerVersion": "1.5",
+		"autoUpgradeMinorVersion": true,
+		"settings": {
+		  "xmlCfg": "[base64(concat(variables('vm').extensions.diagnostics.wadcfgx))]",
+		  "storageAccount": "[variables('vm').datadisk.storageAccount.name]"
+		},
+		"protectedSettings": {
+		  "storageAccountName": "[variables('vm').datadisk.storageAccount.name]",
+		  "storageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('vm').datadisk.storageAccount.name), '2015-06-15').key1]",
+		  "storageAccountEndPoint": "https://core.windows.net"
+		}
+	  }
+	}
+  ],
+  "outputs": {
+	"yellowfinPublicIP": {
+	  "type": "string",
+	  "value": "[reference(variables('network').publicIP.name).ipAddress]"  
+	}
+  }
+}
