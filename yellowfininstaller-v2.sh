@@ -53,18 +53,19 @@ sudo -u postgres psql -c "ALTER USER $_dbuser WITH PASSWORD '$_dbpass'"
 #Get Yellowfin Installer
 date
 echo "Get Yellowfin Installer"
-wget http://au1.hostedftp.com/downloads/azure/jsontemplatedownloads/yellowfin-installer.jar -O /tmp/yellowfin.jar
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/yellowfin-installer.jar -O /tmp/yellowfin.jar
 
 #Get Yellowfin Licence
 date
 echo "Get Yellowfin Licence"
-wget http://au1.hostedftp.com/downloads/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
+wget http://us1.hostedftp.com/~yellowfin/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
 
 #Generate Silence Installer Properties
 date
 echo "Generate Silence Installer Properties"
 echo "InstallPath=/opt/yellowfin" >> /tmp/install.properties
 echo "InstallTutorialDatabase=true" >> /tmp/install.properties
+echo "LicenceFilePath=/tmp/yellowfin72.lic" >> /tmp/install.properties
 echo "ServicePort=80" >> /tmp/install.properties
 echo "InstallService=false" >> /tmp/install.properties
 echo "DatabaseType=PostgreSQL" >> /tmp/install.properties
