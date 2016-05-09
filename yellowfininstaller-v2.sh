@@ -67,7 +67,7 @@ echo "InstallPath=/opt/yellowfin" >> /tmp/install.properties
 echo "InstallTutorialDatabase=true" >> /tmp/install.properties
 echo "LicenceFilePath=/tmp/yellowfin72.lic" >> /tmp/install.properties
 echo "ServicePort=80" >> /tmp/install.properties
-echo "InstallService=false" >> /tmp/install.properties
+#echo "InstallService=false" >> /tmp/install.properties
 echo "DatabaseType=PostgreSQL" >> /tmp/install.properties
 echo "CreateYellowfinDB=true" >> /tmp/install.properties
 echo "CreateYellowfinDBUser=false" >> /tmp/install.properties
@@ -76,7 +76,7 @@ echo "DatabaseName=yellowfindb" >> /tmp/install.properties
 echo "DatabaseDBAUser=$_dbuser" >> /tmp/install.properties
 echo "DatabaseDBAPassword=$_dbpass" >> /tmp/install.properties
 echo "DatabaseUser=$_dbuser" >> /tmp/install.properties
-echo "DatabasePassword=y$_dbpass" >> /tmp/install.properties
+echo "DatabasePassword=$_dbpass" >> /tmp/install.properties
 
 #Install Yellowfin
 date
