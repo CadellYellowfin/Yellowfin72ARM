@@ -92,6 +92,7 @@ sudo sed -i '$i/opt/yellowfin/startup.sh > /tmp/yellowfinstart.log 2>&1' /etc/rc
 #Start Yellowfin
 date
 echo "Start Yellowfin"
-sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+#sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+date
 echo "END"
 exit 0
