@@ -346,32 +346,6 @@
 	{
 	  "apiVersion": "2015-06-15", 
 	  "type": "Microsoft.Compute/virtualMachines/extensions",
-	  "name": "[variables('vm').extensions.installer.name]",
-	  "location": "[variables('location')]",
-	  "tags": {
-		"vendor": "[variables('tags').vendor]",
-		"displayName": "Yellowfin Installer"
-	  },
-	  "dependsOn": [
-		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]"
-	  ],
-	  "properties": {
-		"publisher": "Microsoft.OSTCExtensions",
-		"type": "CustomScriptForLinux",
-		"typeHandlerVersion": "1.4",
-		"autoUpgradeMinorVersion": true,
-		"settings": {
-		  "fileUris": "[variables('vm').extensions.installer.fileUris]"
-		  
-		},
-		"protectedSettings": {
-		  "commandToExecute": "[variables('vm').extensions.installer.commandToExecute]"
-		}
-	  }
-	},
-	{
-	  "apiVersion": "2015-06-15", 
-	  "type": "Microsoft.Compute/virtualMachines/extensions",
 	  "name": "[variables('vm').extensions.diagnostics.name]",
 	  "location": "[variables('location')]",
 	  "tags": {
