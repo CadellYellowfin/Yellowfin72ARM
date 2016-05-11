@@ -104,6 +104,20 @@
 	  "nic": {
 		"name": "[concat(variables('namespace'), '-nic')]",
 		"ipConfigName": "[concat(variables('namespace'), '-ipconfig')]"
+	  },
+		   
+	  "extensions": {
+		"installer": {
+		  "name": "[concat(variables('namespace'), '-vm/YellowfinInstaller-v2')]",
+		  "fileUris": [
+			"[concat(variables('baseUrl'), 'https://raw.githubusercontent.com/CadellYellowfin/Yellowfin72ARM/master/yellowfininstaller-v2.sh')]"
+		  ],
+		  "commandToExecute": "[concat('sh ./yellowfininstaller-v2.sh ', base64(variables('psql').database.credentials.admin.username), ' ', base64(variables('psql').database.credentials.admin.password))]"
+		},
+		"diagnostics": {
+		  "name": "[concat(variables('namespace'), '-vm/Microsoft.Insights.VMDiagnosticsSettings')]",
+		  "wadcfgx": ""
+		}
 	  }
 	},
 	"network": {
@@ -213,7 +227,7 @@
 			  "description": "Allow web",
 			  "protocol": "Tcp",
 			  "sourcePortRange": "*",
-			  "destinationPortRange": "80",
+			  "destinationPortRange": "*",
 			  "sourceAddressPrefix": "Internet",
 			  "destinationAddressPrefix": "*",
 			  "access": "Allow",
@@ -231,7 +245,7 @@
 			  "sourceAddressPrefix": "Internet",
 			  "destinationAddressPrefix": "*",
 			  "access": "Allow",
-			  "priority": 102,
+			  "priority": 101,
 			  "direction": "Inbound"
 			}
 		  }
@@ -327,8 +341,75 @@
 			  "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm').nic.name)]"
 			}
 		  ]
+		},
+		"diagnosticsProfile": {
+		  "bootDiagnostics": {
+			"enabled": "true",
+			"storageUri": "[concat('http://', variables('vm').datadisk.storageAccount.name, '.blob.core.windows.net')]"
+		  }
+		}
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15", 
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "[variables('vm').extensions.installer.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]",
+		"displayName": "Yellowfin Installer"
+	  },
+	  "dependsOn": [
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]"
+	  ],
+	  "properties": {
+		"publisher": "Microsoft.OSTCExtensions",
+		"type": "CustomScriptForLinux",
+		"typeHandlerVersion": "1.4",
+		"autoUpgradeMinorVersion": true,
+		"settings": {
+		  "fileUris": "[variables('vm').extensions.installer.fileUris]"
+		  
+		},
+		"protectedSettings": {
+		  "commandToExecute": "[variables('vm').extensions.installer.commandToExecute]"
+		}
+	  }
+	},
+	{
+	  "apiVersion": "2015-06-15", 
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "[variables('vm').extensions.diagnostics.name]",
+	  "location": "[variables('location')]",
+	  "tags": {
+		"vendor": "[variables('tags').vendor]",
+		"displayName": "Azure VM Diagnostics"
+	  },      
+	  "dependsOn": [
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]",
+		"[concat('Microsoft.Storage/storageAccounts/', variables('vm').datadisk.storageAccount.name)]"
+	  ],      
+	  "properties": {
+		"publisher": "Microsoft.Azure.Diagnostics",
+		"type": "IaaSDiagnostics",
+		"typeHandlerVersion": "1.5",
+		"autoUpgradeMinorVersion": true,
+		"settings": {
+		  "xmlCfg": "[base64(concat(variables('vm').extensions.diagnostics.wadcfgx))]",
+		  "storageAccount": "[variables('vm').datadisk.storageAccount.name]"
+		},
+		"protectedSettings": {
+		  "storageAccountName": "[variables('vm').datadisk.storageAccount.name]",
+		  "storageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('vm').datadisk.storageAccount.name), '2015-06-15').key1]",
+		  "storageAccountEndPoint": "https://core.windows.net"
 		}
 	  }
 	}
-  ]
+  ],
+  "outputs": {
+	"yellowfinPublicIP": {
+	  "type": "string",
+	  "value": "[reference(variables('network').publicIP.name).ipAddress]"  
+	}
+  }
 }
