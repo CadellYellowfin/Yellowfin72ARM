@@ -368,7 +368,7 @@
 	},
 	{
 	  "type": "Microsoft.Compute/virtualMachines/extensions",
-	  "name": "DiagExtention",
+	  "name": "DiagExtention/YF",
 	  "apiVersion": "2015-06-15",
 	  "location": "[variables('location')]",
 	  "dependsOn": [
