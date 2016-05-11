@@ -227,7 +227,7 @@
 			  "description": "Allow web",
 			  "protocol": "Tcp",
 			  "sourcePortRange": "*",
-			  "destinationPortRange": "80",
+			  "destinationPortRange": "*",
 			  "sourceAddressPrefix": "Internet",
 			  "destinationAddressPrefix": "*",
 			  "access": "Allow",
