@@ -372,7 +372,7 @@
 	  "apiVersion": "2015-06-15",
 	  "location": "[variables('location')]",
 	  "dependsOn": [
-		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name))]"
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]"
 	  ],
 	  "properties": {
 		"publisher": "Microsoft.OSTCExtensions",
