@@ -93,6 +93,9 @@ sudo sed -i '$i/opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log
 date
 echo "Start Yellowfin"
 sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+<<<<<<< HEAD
 date
+=======
+>>>>>>> parent of b4bd91c... testing. Removed startup
 echo "END"
 exit 0
