@@ -111,7 +111,7 @@
 		  "name": "[concat(variables('namespace'), '-vm/YellowfinInstaller-v2')]",
 		  "fileUris": [
 			"[concat(variables('baseUrl'), 'https://raw.githubusercontent.com/CadellYellowfin/Yellowfin72ARM/master/yellowfininstaller-v2.sh')]"
-		  ]
+		  ],
 		  "commandToExecute": "[concat('sh ./yellowfininstaller-v2.sh ', base64(variables('psql').database.credentials.admin.username), ' ', base64(variables('psql').database.credentials.admin.password))]"
 		}
 	  }
