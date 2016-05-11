@@ -104,13 +104,6 @@
 	  "nic": {
 		"name": "[concat(variables('namespace'), '-nic')]",
 		"ipConfigName": "[concat(variables('namespace'), '-ipconfig')]"
-	  },
-		   
-	  "extensions": {
-		"diagnostics": {
-		  "name": "[concat(variables('namespace'), '-vm/Microsoft.Insights.VMDiagnosticsSettings')]",
-		  "wadcfgx": ""
-		}
 	  }
 	},
 	"network": {
@@ -334,49 +327,8 @@
 			  "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm').nic.name)]"
 			}
 		  ]
-		},
-		"diagnosticsProfile": {
-		  "bootDiagnostics": {
-			"enabled": "true",
-			"storageUri": "[concat('http://', variables('vm').datadisk.storageAccount.name, '.blob.core.windows.net')]"
-		  }
-		}
-	  }
-	},
-	{
-	  "apiVersion": "2015-06-15", 
-	  "type": "Microsoft.Compute/virtualMachines/extensions",
-	  "name": "[variables('vm').extensions.diagnostics.name]",
-	  "location": "[variables('location')]",
-	  "tags": {
-		"vendor": "[variables('tags').vendor]",
-		"displayName": "Azure VM Diagnostics"
-	  },      
-	  "dependsOn": [
-		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name)]",
-		"[concat('Microsoft.Storage/storageAccounts/', variables('vm').datadisk.storageAccount.name)]"
-	  ],      
-	  "properties": {
-		"publisher": "Microsoft.Azure.Diagnostics",
-		"type": "IaaSDiagnostics",
-		"typeHandlerVersion": "1.5",
-		"autoUpgradeMinorVersion": true,
-		"settings": {
-		  "xmlCfg": "[base64(concat(variables('vm').extensions.diagnostics.wadcfgx))]",
-		  "storageAccount": "[variables('vm').datadisk.storageAccount.name]"
-		},
-		"protectedSettings": {
-		  "storageAccountName": "[variables('vm').datadisk.storageAccount.name]",
-		  "storageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('vm').datadisk.storageAccount.name), '2015-06-15').key1]",
-		  "storageAccountEndPoint": "https://core.windows.net"
 		}
 	  }
 	}
-  ],
-  "outputs": {
-	"yellowfinPublicIP": {
-	  "type": "string",
-	  "value": "[reference(variables('network').publicIP.name).ipAddress]"  
-	}
-  }
+  ]
 }
