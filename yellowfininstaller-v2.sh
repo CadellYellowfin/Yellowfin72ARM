@@ -4,19 +4,19 @@ echo "Start script"
 
 #Setting DB user var
 _dbuser=`echo $1 | base64 --decode`
-if [ -z "$_dbuser" ]
-	then
-	_dbuser="yellowfindbuser"
-fi
+#if [ -z "$_dbuser" ]
+#	then
+#	_dbuser="yellowfindbuser"
+#fi
 echo "db User is"
 echo $_dbuser
 
 #Setting DB user var
 _dbpass=`echo $2 | base64 --decode`
-if [ -z "$_dbpass" ]
-	then
-	_dbpass="Asz7js599!"
-fi
+#if [ -z "$_dbpass" ]
+#	then
+#	_dbpass="Asz7js599!"
+#fi
 echo "db pass is"
 echo $_dbpass
 
@@ -92,4 +92,5 @@ sudo sed -i '$i/opt/yellowfin/startup.sh > /tmp/yellowfinstart.log 2>&1' /etc/rc
 #Start Yellowfin
 date
 echo "Start Yellowfin"
-sudo /opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log 2>&1
+sudo /opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log 2>&1 &
+exit 0
