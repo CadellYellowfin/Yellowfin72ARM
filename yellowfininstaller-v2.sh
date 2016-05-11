@@ -58,7 +58,7 @@ wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/y
 #Get Yellowfin Licence
 date
 echo "Get Yellowfin Licence"
-wget us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
 
 #Generate Silence Installer Properties
 date
@@ -92,5 +92,6 @@ sudo sed -i '$i/opt/yellowfin/startup.sh > /tmp/yellowfinstart.log 2>&1' /etc/rc
 #Start Yellowfin
 date
 echo "Start Yellowfin"
-sudo /opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log 2>&1 &
+sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+echo "END"
 exit 0
