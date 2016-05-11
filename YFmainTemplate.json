@@ -365,6 +365,38 @@
 		  "commandToExecute": "[variables('vm').extensions.installer.commandToExecute]"
 		}
 	  }
+	},
+	{
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "DiagExtention",
+	  "apiVersion": "2015-06-15",
+	  "location": "[variables('location')]",
+	  "dependsOn": [
+		"[concat('Microsoft.Compute/virtualMachines/', variables('vm').name))]"
+	  ],
+	  "properties": {
+		"publisher": "Microsoft.OSTCExtensions",
+		"type": "LinuxDiagnostic",
+		"typeHandlerVersion": "2.3",
+		"settings": {
+		   "perfCfg":[
+			  {
+				"query":"SELECT UsedMemory,AvailableMemory FROM SCX_MemoryStatisticalInformation","table":"Memory"
+			  }
+			]
+		},
+		 "protectedSettings": {
+         "storageAccountName": "[variables('vm').datadisk.storageAccount.name]",
+         "storageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('vm').datadisk.storageAccount.name), '2015-06-15').key1]",
+         "storageAccountEndPoint": "https://core.windows.net"
+       }
+	  }
 	}
-  ]
+  ],
+  "outputs": {
+	"yellowfinPublicIP": {
+	  "type": "string",
+	  "value": "[reference(variables('network').publicIP.name).ipAddress]"  
+	}
+  }
 }
