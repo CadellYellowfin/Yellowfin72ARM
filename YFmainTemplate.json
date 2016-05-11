@@ -227,12 +227,26 @@
 			  "description": "Allow web",
 			  "protocol": "Tcp",
 			  "sourcePortRange": "*",
-			  "destinationPortRange": "*",
+			  "destinationPortRange": "80",
 			  "sourceAddressPrefix": "Internet",
 			  "destinationAddressPrefix": "*",
 			  "access": "Allow",
 			  "priority": 100,
 			  "direction": "Inbound"
+			}
+		  },
+		  {
+			"name": "allow_all_out",
+			"properties": {
+			  "description": "Allow all out",
+			  "protocol": "Tcp",
+			  "sourcePortRange": "*",
+			  "destinationPortRange": "*",
+			  "sourceAddressPrefix": "Internet",
+			  "destinationAddressPrefix": "*",
+			  "access": "Allow",
+			  "priority": 101,
+			  "direction": "Outbound"
 			}
 		  },
 		  {
@@ -245,7 +259,7 @@
 			  "sourceAddressPrefix": "Internet",
 			  "destinationAddressPrefix": "*",
 			  "access": "Allow",
-			  "priority": 101,
+			  "priority": 102,
 			  "direction": "Inbound"
 			}
 		  }
