@@ -236,20 +236,6 @@
 			}
 		  },
 		  {
-			"name": "allow_all_out",
-			"properties": {
-			  "description": "Allow all out",
-			  "protocol": "Tcp",
-			  "sourcePortRange": "*",
-			  "destinationPortRange": "*",
-			  "sourceAddressPrefix": "Internet",
-			  "destinationAddressPrefix": "*",
-			  "access": "Allow",
-			  "priority": 101,
-			  "direction": "Outbound"
-			}
-		  },
-		  {
 			"name": "allow_ssh",
 			"properties": {
 			  "description": "Allow SSH",
