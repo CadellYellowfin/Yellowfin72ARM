@@ -58,7 +58,7 @@ wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/y
 #Get Yellowfin Licence
 date
 echo "Get Yellowfin Licence"
-wget http://us1.hostedftp.com/~yellowfin/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
+wget us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
 
 #Generate Silence Installer Properties
 date
