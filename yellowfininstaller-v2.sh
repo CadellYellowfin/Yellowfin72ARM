@@ -80,20 +80,36 @@ echo "Set Boot Params"
 sudo sed -i '$ihostname Yellowfin72' /etc/rc.local
 sudo sed -i '$i/opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log 2>&1' /etc/rc.local
 
-#Create Custom Login Page
-date
-echo "Create custom login page"
-sed -i 's/index_mi.jsp/custom_index_mi.jsp/g' /opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml
-wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/custom_index_mi.file -O /opt/yellowfin/appserver/webapps/ROOT/custom_index_mi.jsp
-wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/images.tar.gz -O /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
-tar -zxf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz -C /opt/yellowfin/appserver/webapps/ROOT/.
-
 #Start Yellowfin
 date
 echo "Start Yellowfin"
 sudo nohup /opt/yellowfin/appserver/bin/startup.sh
 
-#Clean Update
+for (( c=1; c<=600; c++ ))
+do
+date
+echo "looping $c"
+sleep 10
+if [ -f "/opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml" ]; then
+#Create Custom Login Page
+date
+echo "Create custom login page"
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/custom_index_mi.file -O /opt/yellowfin/appserver/webapps/ROOT/custom_index_mi.jsp
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/images.tar.gz -O /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
+tar -zxf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz -C /opt/yellowfin/appserver/webapps/ROOT/.
+sed -i 's/index_mi.jsp/custom_index_mi.jsp/g' /opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml
+
+#Reboot Yellowfin
+date
+echo "Rebooting Yellowfin"
+sudo nohup /opt/yellowfin/appserver/bin/shutdown.sh
+sleep 5
+sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+c=600
+fi
+done
+
+#Clean Up
 date
 echo "Clean up"
 rm -rf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
