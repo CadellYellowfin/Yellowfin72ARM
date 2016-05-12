@@ -4,19 +4,11 @@ echo "Start script"
 
 #Setting DB user var
 _dbuser=`echo $1 | base64 --decode`
-#if [ -z "$_dbuser" ]
-#	then
-#	_dbuser="yellowfindbuser"
-#fi
 echo "db User is"
 echo $_dbuser
 
 #Setting DB user var
 _dbpass=`echo $2 | base64 --decode`
-#if [ -z "$_dbpass" ]
-#	then
-#	_dbpass="Asz7js599!"
-#fi
 echo "db pass is"
 echo $_dbpass
 
@@ -67,7 +59,6 @@ echo "InstallPath=/opt/yellowfin" >> /tmp/install.properties
 echo "InstallTutorialDatabase=true" >> /tmp/install.properties
 echo "LicenceFilePath=/tmp/yellowfin72.lic" >> /tmp/install.properties
 echo "ServicePort=80" >> /tmp/install.properties
-#echo "InstallService=false" >> /tmp/install.properties
 echo "DatabaseType=PostgreSQL" >> /tmp/install.properties
 echo "CreateYellowfinDB=true" >> /tmp/install.properties
 echo "CreateYellowfinDBUser=false" >> /tmp/install.properties
@@ -89,10 +80,26 @@ echo "Set Boot Params"
 sudo sed -i '$ihostname Yellowfin72' /etc/rc.local
 sudo sed -i '$i/opt/yellowfin/appserver/bin/startup.sh > /tmp/yellowfinstart.log 2>&1' /etc/rc.local
 
+#Create Custom Login Page
+date
+echo "Create custom login page"
+sed -i 's/index_mi.jsp/custom_index_mi.jsp/g' /opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/custom_index_mi.file -O /opt/yellowfin/appserver/webapps/ROOT/custom_index_mi.jsp
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/images.tar.gz -O /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
+tar -zxf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz -C /opt/yellowfin/appserver/webapps/ROOT/.
+
 #Start Yellowfin
 date
 echo "Start Yellowfin"
 sudo nohup /opt/yellowfin/appserver/bin/startup.sh
+
+#Clean Update
+date
+echo "Clean up"
+rm -rf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
+rm -rf /tmp/yellowfin.jar
+rm -rf /tmp/yellowfin72.lic
+
 date
 echo "END"
 exit 0

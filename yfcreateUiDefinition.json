@@ -17,63 +17,37 @@
             "name": "VM",
             "type": "Microsoft.Common.Section",
             "label": "Virtual Machine",
-            "elements": [
+            "elements": [		  
               {
-                "name": "OctopusServerVMPublicIP",
-                "type": "Microsoft.Network.PublicIpAddressCombo",
-                "label": {
-                  "publicIpAddress": "Public IP Address",
-                  "domainNameLabel": "Domain Name Prefix"
-                },
-                "toolTip": {
-                  "publicIpAddress": "Creates a reserved Public IP Address for ip whitelisting purposes.",
-                  "domainNameLabel": "Please enter a domain name for your Octopus Deploy server."
-                },
-                "defaultValue": {
-                  "publicIpAddressName": "octopus-publicip"
-                },
-                "constraints": {
-                  "required": {
-                    "publicIpAddress": true,
-                    "domainNameLabel": true
-                  }
-                },
-                "options": {
-                  "hideNone": true,
-                  "hideDomainNameLabel": false,
-                  "hideExisting": true
-                }
-              },
-              {
-                "name": "OctopusServerVMAdminUserName",
+                "name": "YellowfinVMAdminUserName",
                 "type": "Microsoft.Compute.UserNameTextBox",
                 "label": "Admin User Name",
-                "defaultValue": "octoadmin",
-                "toolTip": "Please enter an admin user name.",
+                "defaultValue": "ubuntu",
+                "toolTip": "Please enter a username for your Virtual Machine",
                 "constraints": {
                   "required": true
                 },
-                "osPlatform": "Windows"
+                "osPlatform": "Linux"
               },
               {
-                "name": "OctopusServerVMAdminPassword",
+                "name": "YellowfinVMAdminPassword",
                 "type": "Microsoft.Compute.CredentialsCombo",
                 "label": {
-                  "password": "Admin Password",
-                  "confirmPassword": "Confirm Admin Password"
+                  "password": "Virtual Machine Password",
+                  "confirmPassword": "Confirm Virtual Machine Password"
                 },
-                "toolTip": "Please enter an admin password.",
+                "toolTip": "Please enter a password for your Virtual Machine.",
                 "constraints": {
                   "required": true,
-                  "validationMessage": "Please enter an admin password."
+                  "validationMessage": "Please enter a password for your Virtual Machine."
                 },
                 "options": {
                   "hideConfirmation": false
                 },
-                "osPlatform": "Windows"
+                "osPlatform": "Linux"
               },
               {
-                "name": "OctopusServerVMSize",
+                "name": "YellowfinVMSize",
                 "type": "Microsoft.Compute.SizeSelector",
                 "label": "Virtual Machine Size",
                 "toolTip": "",
@@ -87,30 +61,29 @@
                   "allowedSizes": [],
                   "excludedSizes": []
                 },
-                "osPlatform": "Windows",
+                "osPlatform": "Linux",
                 "imageReference": {
-                  "publisher": "MicrosoftWindowsServer",
-                  "offer": "WindowsServer",
-                  "sku": "2012-R2-Datacenter"
+                  "publisher": "canonical",
+                  "offer": "ubuntuserver",
+                  "sku": "14.04.4-LTS"
                 }
               }
             ]
           },
-          //NOT REQUIRED
           {
             "name": "Database",
             "type": "Microsoft.Common.Section",
-            "label": "Database",
+            "label": "Installation Database",
             "elements": [
               {
                 "name": "SqlServerAdminUserName",
                 "type": "Microsoft.Common.TextBox",
-                "label": "SQL Server Admin User Name",
-                "toolTip": "Please enter a SQL Server admin user name.",
-                "defaultValue": "sqladmin",
+                "label": "Postgres Username",
+                "toolTip": "Admin username for the Yellowfin Postgres DB Server.",
+                "defaultValue": "yellowfindbuser",
                 "constraints": {
                   "required": true,
-                  "regex": "^(?!(admin$|administrator$|guest$|root$|sa$)).*",
+                  "regex": "^[a-z]+$",
                   "validationMessage": "The specified user name is not allowed. User names must meet length requirements, and must not include reserved words or unsupported characters. Try again with a different value."
                 }
               },
@@ -118,7 +91,7 @@
                 "name": "SqlServerAdminPassword",
                 "type": "Microsoft.Common.PasswordBox",
                 "label": "SQL Server Admin Password",
-                "toolTip": "Please enter a SQL Server admin password.",
+                "toolTip": "Admin password for the Yellowfin Postgres DB Server.",
                 "constraints": {
                   "required": true,
                   "regex": "^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])|(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*])|(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])).{8,128}$",
@@ -128,98 +101,14 @@
             ]
           }
         ]
-      },
-      
-      {
-        "name": "Octopus",
-        "label": "Octopus Deploy",
-        "subLabel": {
-          "preValidation": "Configure Octopus Deploy",
-          "postValidation": "Done"
-        },
-        "bladeTitle": "Octopus Deploy Configuration",
-        "elements": [
-          {
-            "name": "Credentials",
-            "type": "Microsoft.Common.Section",
-            "label": "Octopus Deploy Administrator Credentials",
-            "elements": [
-              {
-                "name": "OctopusAdministratorUserName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "User Name",
-                "defaultValue": "admin",
-                "constraints": {
-                  "required": true,
-                  "validationMessage": "Please enter an Octopus Deploy administrator user name."
-                }
-              },
-              {
-                "name": "OctopusAdministratorPassword",
-                "type": "Microsoft.Common.PasswordBox",
-                "label": "Password",
-                "tooltip": "Please enter an Octopus Deploy administrator password.",
-                "constraints": {
-                  "required": true,
-                  "regex": "^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])|(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*])|(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])).{8,128}$",
-                  "validationMessage": "The password must be at least 8 characters long and have 3 out of the following: one number, one lower case, one upper case, or one special character."
-                }
-              }
-            ]
-          },
-          {
-            "name": "License",
-            "type": "Microsoft.Common.Section",
-            "label": "License Details",
-            "elements": [
-              {
-                "name": "LicenseFullName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "Full Name",
-                "tooltip": "Please enter your Full Name which will be assigned to your Octopus Deploy license.",
-                "constraints": {
-                  "required": true,
-                  "validationMessage": "Please enter your Full Name."
-                }
-              },
-              {
-                "name": "LicenseOrganization",
-                "type": "Microsoft.Common.TextBox",
-                "label": "Organization Name",
-                "tooltip": "Please enter your Organization Name which will be assigned to your Octopus Deploy license.",
-                "constraints": {
-                  "required": true,
-                  "validationMessage": "Please enter your Organization Name."
-                }
-              },
-              {
-                "name": "LicenseEmail",
-                "type": "Microsoft.Common.TextBox",
-                "label": "Email Address",
-                "tooltip": "Please enter your Email Address which will be assigned to your Octopus Deploy license.",
-                "constraints": {
-                  "required": true,
-                  "regex": "[^@]+@[^@]+\\.[A-z]{2,4}",
-                  "validationMessage": "Please enter a valid Email Address."
-                }
-              }
-            ]
-          }
-        ]
       }
     ],
     "outputs": {
-      "octopusDnsName": "[steps('Infrastructure').VM.OctopusServerVMPublicIP.domainNameLabel]",
-      "vmAdminUsername": "[steps('Infrastructure').VM.OctopusServerVMAdminUserName]",
-      "vmAdminPassword": "[steps('Infrastructure').VM.OctopusServerVMAdminPassword.password]",
-      "vmSize": "[steps('Infrastructure').VM.OctopusServerVMSize]",
+      "vmUsername": "[steps('Infrastructure').VM.YellowfinVMAdminUserName]",
+      "vmPassword": "[steps('Infrastructure').VM.YellowfinVMAdminPassword.password]",
+      "vmSize": "[steps('Infrastructure').VM.YellowfinVMSize]",
       "sqlAdminUsername": "[steps('Infrastructure').Database.SqlServerAdminUserName]",
-      "sqlAdminPassword": "[steps('Infrastructure').Database.SqlServerAdminPassword]",
-      "licenseFullName": "[steps('Octopus').License.LicenseFullName]",
-      "licenseOrganisationName": "[steps('Octopus').License.LicenseOrganization]",
-      "licenseEmailAddress": "[steps('Octopus').License.LicenseEmail]",
-      "octopusAdminUsername": "[steps('Octopus').Credentials.OctopusAdministratorUserName]",
-      "octopusAdminPassword": "[steps('Octopus').Credentials.OctopusAdministratorPassword]"
+      "sqlAdminPassword": "[steps('Infrastructure').Database.SqlServerAdminPassword]"
     }
   }
 }
