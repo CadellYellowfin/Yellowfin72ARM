@@ -83,7 +83,7 @@
                 "defaultValue": "yellowfindbuser",
                 "constraints": {
                   "required": true,
-                  "regex": "^[a-z]+$",
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
                   "validationMessage": "The specified user name is not allowed. User names must meet length requirements, and must not include reserved words or unsupported characters. Try again with a different value."
                 }
               },
