@@ -85,31 +85,6 @@ date
 echo "Start Yellowfin"
 sudo nohup /opt/yellowfin/appserver/bin/startup.sh
 
-for (( c=1; c<=600; c++ ))
-do
-date
-echo "looping $c"
-sleep 10
-if [ -f "/opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml" ]; then
-#Create Custom Login Page
-date
-echo "Create custom login page"
-sleep 10
-wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/custom_index_mi.file -O /opt/yellowfin/appserver/webapps/ROOT/custom_index_mi.jsp
-wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/images.tar.gz -O /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz
-tar -zxf /opt/yellowfin/appserver/webapps/ROOT/images.tar.gz -C /opt/yellowfin/appserver/webapps/ROOT/.
-sed -i 's/index_mi.jsp/custom_index_mi.jsp/g' /opt/yellowfin/appserver/webapps/ROOT/WEB-INF/web.xml
-sleep 15
-#Reboot Yellowfin
-date
-echo "Rebooting Yellowfin"
-sudo nohup /opt/yellowfin/appserver/bin/shutdown.sh
-sleep 10
-sudo nohup /opt/yellowfin/appserver/bin/startup.sh
-c=600
-fi
-done
-
 #Clean Up
 date
 echo "Clean up"
