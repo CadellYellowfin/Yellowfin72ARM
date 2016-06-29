@@ -101,6 +101,101 @@
             ]
           }
         ]
+      },
+	  {
+        "name": "Licencing",
+        "label": "Licencing",
+        "subLabel": {
+          "preValidation": "Receive your login credentials",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "Licencing",
+        "elements": [
+          {
+            "name": "Licencing",
+            "type": "Microsoft.Common.Section",
+            "label": "Contact Details",
+            "elements": [
+              {
+                "name": "Firstname",
+                "type": "Microsoft.Common.TextBox",
+                "label": "First Name",
+                "toolTip": "Your First Name",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters"
+                }
+              },
+              {
+                "name": "Lastname",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Last Name",
+                "toolTip": "Your Last Name",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters"
+                }
+              },
+			  {
+                "name": "Title",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Position Title",
+                "toolTip": "Your Business Title",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters"
+                }
+              },
+			  {
+                "name": "Company",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Company",
+                "toolTip": "The Company you work for",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters"
+                }
+              },
+			  {
+                "name": "Companywebsite",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Company Website",
+                "toolTip": "Your Companies web address",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters and periods"
+                }
+              },
+			    {
+                "name": "EmailAddress",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Email Address",
+                "toolTip": "Your Email Address to receive login credentials at",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only Upper and Lower case characters, periods and at symbols"
+                }
+              },
+			  {
+                "name": "Phonenumber",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Phone Number",
+                "toolTip": "Your Phone Number",
+                "constraints": {
+                  "required": true,
+                  "regex": "^(?!admin|postgres|administrator|ubuntu)[\w]{5,}$",
+                  "validationMessage": "Please try again using only numbers"
+                }
+              },
+            ]
+          }
+        ]
       }
     ],
     "outputs": {

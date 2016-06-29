@@ -52,6 +52,17 @@ date
 echo "Get Yellowfin Licence"
 wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/License-Yellowfin-FULLVERSION-Yellowfin72.lic -O /tmp/yellowfin72.lic
 
+#Get MQ
+date
+echo "Get MQ exe"
+wget http://us1.hostedftp.com/~yellowfin/downloads/azure/jsontemplatedownloads/azure-mq.zip -O /tmp/azure-mq.zip
+unzip /tmp/azure-mq.zip
+chmod +x /tmp/azure-mq
+
+#Send MQ
+/tmp/azure-mq "10.10.10.10" "AZURE" "AZURE" "Cadell" "Falconer" "Support" "Yellowfin" "www.yellowfin.bi" "cadell.falconer@yellowfin.bi" "0400000000" "CUSTOMER" "Australia"
+
+
 #Generate Silence Installer Properties
 date
 echo "Generate Silence Installer Properties"
