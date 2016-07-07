@@ -114,7 +114,7 @@
           {
             "name": "Licencing",
             "type": "Microsoft.Common.Section",
-            "label": "Contact Details",
+            "label": "Your Contact Details",
             "elements": [
               {
                 "name": "Firstname",
